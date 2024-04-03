@@ -16,9 +16,8 @@ class PersonalAccessToken(PAT_ABC):
             "reset": datetime.now(),
         }
 
-    def decrementRateLimit(self) -> None:
-        if self.restLimits["calls"] > 0:
-            self.restLimits["calls"] = self.restLimits["calls"] - 1
+    def incrementRateLimit(self) -> None:
+        if self.restLimits["used"] != self.restLimits["calls"]:
             self.restLimits["used"] = self.restLimits["used"] + 1
         else:
             raise ExceededRateLimitError()
@@ -48,3 +47,7 @@ class PersonalAccessToken(PAT_ABC):
         self.restLimits["calls"] = restLimits["limit"]
         self.restLimits["used"] = restLimits["used"]
         self.restLimits["reset"] = datetime.fromtimestamp(restLimits["reset"])
+
+    def getToken(self) -> str:
+        self.incrementRateLimit()
+        return self.token

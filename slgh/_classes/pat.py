@@ -3,11 +3,6 @@ from datetime import datetime
 from typing import Protocol
 
 
-class ExceededRateLimitError(Exception):
-    def __str__(self):
-        return "No more tokens to use"
-
-
 class PAT_Protocol(Protocol):
     token: str
     restLimits: dict[str, int | datetime]
@@ -15,7 +10,7 @@ class PAT_Protocol(Protocol):
 
 class PAT_ABC(metaclass=ABCMeta):
     @abstractmethod
-    def decrementRateLimit(self) -> None:
+    def incrementRateLimit(self) -> None:
         ...
 
     @abstractmethod
@@ -32,4 +27,8 @@ class PAT_ABC(metaclass=ABCMeta):
         Set the token usage tracker "calls" field to the maximum number of calls
         availible and the "used" field to the number of calls used
         """
+        ...
+
+    @abstractmethod
+    def getToken(self) -> str:
         ...
